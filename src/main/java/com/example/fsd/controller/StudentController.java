@@ -274,7 +274,6 @@ public class StudentController {
             existingStudent.setGender(student.getGender());
             existingStudent.setAddress(student.getAddress());
             
-
             Student updatedStudent = studentRepo.save(existingStudent);
             response.setMessage("Student updated successfully");
             response.setStatus(true);

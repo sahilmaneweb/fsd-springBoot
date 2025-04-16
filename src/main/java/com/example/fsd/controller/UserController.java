@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -107,7 +107,7 @@ public class UserController {
         }
     }
 
-    @PutMapping(path="/updatePassword", consumes="aplication/json", produces="application/json")
+    @PostMapping(path="updatePassword", consumes="application/json", produces="application/json")
     public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String token,@RequestBody UpdateUser user){
         ResponseBean response = new ResponseBean();
         try {

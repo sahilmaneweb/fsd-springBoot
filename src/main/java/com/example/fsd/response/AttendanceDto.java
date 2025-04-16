@@ -18,6 +18,16 @@ public class AttendanceDto {
         private String date; // yyyy-MM-dd
         private AttendanceStatus status;
 }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class attendanceDashboard{
+        private Integer presentLectures;
+        private Integer totalLectures;
+        private Float percentage;
+    }
+
     @Data
     public static class AttendanceListDTO {
         @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)

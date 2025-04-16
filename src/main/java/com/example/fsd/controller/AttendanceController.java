@@ -31,6 +31,7 @@ import com.example.fsd.response.ResponseBean;
 
 import io.jsonwebtoken.Claims;
 
+import com.example.fsd.response.AttendanceDto;
 import com.example.fsd.response.AttendanceDto.AttendanceDTO;
 import com.example.fsd.response.ErrorResponse;
 
@@ -190,4 +191,43 @@ public ResponseEntity<?> getAttendanceByMonthAndBatch(
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @GetMapping("/student/dashboard")
+public ResponseEntity<?> getStudentAttendanceDashboard(@RequestHeader("Authorization") String token) {
+    ResponseBean response = new ResponseBean();
+    try {
+        Claims claims = jwtUtil.validateRole(token, List.of("student", "mentor", "admin"));
+        String studentId = claims.getSubject(); // UID from JWT
+
+        // ✅ Total distinct dates where any student was PRESENT
+        List<LocalDate> allPresentDates = attendanceRepo.findDistinctDatesWhereAnyStudentPresent();
+
+        // ✅ Distinct dates where this student was marked PRESENT
+        List<LocalDate> studentPresentDates = attendanceRepo.findDistinctDatesByStudentUidAndStatus(studentId, AttendanceStatus.PRESENT);
+
+        int totalLectures = allPresentDates.size();
+        int presentLectures = studentPresentDates.size();
+        float percentage = (totalLectures == 0) ? 0 : (presentLectures * 100f / totalLectures);
+
+        AttendanceDto.attendanceDashboard dashboard = new AttendanceDto.attendanceDashboard(
+            presentLectures,
+            totalLectures,
+            percentage
+        );
+
+        response.setStatus(true);
+        response.setMessage("Student attendance dashboard calculated.");
+        response.setData(dashboard);
+        return ResponseEntity.ok(response);
+
+    } catch (JwtUtil.JwtException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("JWT " + e.getMessage(), 401));
+    } catch (Exception e) {
+        response.setStatus(false);
+        response.setMessage("Error while fetching dashboard: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+}
+
 }

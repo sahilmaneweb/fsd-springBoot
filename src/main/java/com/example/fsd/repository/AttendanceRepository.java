@@ -38,4 +38,13 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     @Query("SELECT DISTINCT a.date FROM Attendance a")
     List<LocalDate> findAllDistinctDates();
+
+    // Total distinct dates where any student was marked PRESENT
+@Query("SELECT DISTINCT a.date FROM Attendance a WHERE a.status = 'PRESENT'")
+List<LocalDate> findDistinctDatesWhereAnyStudentPresent();
+
+// Distinct dates where a specific student was marked PRESENT
+@Query("SELECT DISTINCT a.date FROM Attendance a WHERE a.student.uid = :uid AND a.status = 'PRESENT'")
+List<LocalDate> findDistinctDatesByStudentUidAndStatus(@Param("uid") String uid, @Param("status") Attendance.AttendanceStatus status);
+
 }

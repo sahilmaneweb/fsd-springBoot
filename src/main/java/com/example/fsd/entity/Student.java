@@ -31,7 +31,7 @@ public class Student {
     private String address;
     private String gender;
     @ManyToOne
-    @JoinColumn(name="batch_id", referencedColumnName = "batchName", nullable = true)
+    @JoinColumn(name="batch_id", referencedColumnName = "batchName", nullable = false)
     private Batch batch;
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "groupId", nullable = true)
