@@ -1,14 +1,12 @@
-# Use the official openjdk image from Docker Hub
-FROM openjdk:17-jdk-slim
-
-# Set the working directory in the container
+# Stage 1: Build the JAR using Maven
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy the jar file from the host to the container
-COPY target/fsd-0.0.1-SNAPSHOT.jar /app/app.jar
-
-# Expose the port your Spring Boot app runs on (default is 8080)
+# Stage 2: Run the JAR
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Command to run the Spring Boot app
 CMD ["java", "-jar", "app.jar"]
